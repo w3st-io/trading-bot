@@ -8,20 +8,18 @@ require('dotenv').config()
 
 
 // [REQUIRE] Personal //
-const CBAuthClient = require('./CBAuthClient')
-const CBPublicClient = require('./CBPublicClient')
-const CBAlgo = require('./CBAlgo')
-////////////////////////////////////////////////////////////
+const Algo = require('./Algo')
 
-// 1 5 30 60 720 1440 Minutes
+
+/***** [TRADING-BOT-START] *****/
+// [INIT] //
 let timeFrames = [60, 300, 1800, 3600, 43200, 86400]
 let timeFramePriceAvgs = []
 
 async function trade() {
 	// For Each timeFrame in timeFrames
 	for (let i = 0; i < timeFrames.length; i++) {
-		console.log(timeFrames[i])
-		timeFramePriceAvgs[i] = await CBAlgo.getAverage(
+		timeFramePriceAvgs[i] = await Algo.getAverage(
 			null,
 			timeFrames[i]
 		)

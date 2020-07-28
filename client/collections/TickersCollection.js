@@ -1,14 +1,14 @@
 /**
- * %%%%%%%%%%%%%%%%%%%% *
- * %%% CBALGO CLASS %%% *
- * %%%%%%%%%%%%%%%%%%%% *
+ * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% *
+ * %%% TICKERS COLLECTIONS CLASS %%% *
+ * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% *
 */
 // [REQUIRE] //
 const mongodb = require('mongodb')
 require('dotenv').config()
 
 
-class CBAlgo {
+class TickersCollection {
 	// [MONGODB-CONNECT] //
 	static async connect() {
 		const uri = process.env.MONGO_URI
@@ -41,14 +41,15 @@ class CBAlgo {
 	// [READL-ALL] Within Timeframe //
 	static async readAllWitinTimeFrame(product_id, timeFrame) {
 		if(!product_id) { product_id = 'ETH-USD' }
-
 		let currentTime = new Date()
 		let pastTime = new Date()
 
+		// [ARITHMETIC] Calculate Past Time //
 		pastTime.setSeconds(pastTime.getSeconds() - timeFrame)
 
 		const blocks = await this.connect()
-		const returnedData = await blocks.find(
+
+		return await blocks.find(
 			{
 				product_id: product_id,
 				time: {
@@ -57,35 +58,8 @@ class CBAlgo {
 				}
 			}
 		).toArray()
-			
-		return returnedData
-	}
-
-
-	// [AVERAGE] //
-	static async getAverage(product_id, timeFrame) {
-		// [INIT] //
-		if (!timeFrame) { timeFrame = 1440 }
-		let sumOfTradePrices = 0
-
-		// [READL-ALL] Within Timeframe //
-		const trades = await this.readAllWitinTimeFrame(product_id, timeFrame)
-		
-		// [ARITHMETIC] Sum //
-		trades.forEach((trade) => {
-			sumOfTradePrices = sumOfTradePrices + trade.price
-		})
-
-		// [ARITHMETIC] Average //
-		const average = sumOfTradePrices / trades.length
-
-		return {
-			status: true,
-			timeFrame: timeFrame,
-			average: average,
-		}
 	}
 }
 
 // [EXPORT] //
-module.exports = CBAlgo
+module.exports = TickersCollection
