@@ -1,6 +1,6 @@
 /**
  * %%%%%%%%%%%%%%%%%%%% *
- * %%% CBAlgo CLASS %%% *
+ * %%% CBALGO CLASS %%% *
  * %%%%%%%%%%%%%%%%%%%% *
 */
 // [REQUIRE] //
@@ -9,7 +9,7 @@ require('dotenv').config()
 
 
 class CBAlgo {
-	// [MONGDB-CONNECT] //
+	// [MONGODB-CONNECT] //
 	static async connect() {
 		const uri = process.env.MONGO_URI
 		const db_name = process.env.DB || 'trader'

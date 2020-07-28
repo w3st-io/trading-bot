@@ -5,6 +5,7 @@ class CBPublicClient {
 		catch(e) { return `Caught Error --> ${e}` }
 	}
 	
+
 	// [READ] getProductOrders //
 	static async t_getProductOrderBook(publicClient, product_id, level) {
 		// If no params passed set Default
@@ -20,6 +21,7 @@ class CBPublicClient {
 		catch(e) { return `Caught Error --> ${e}` }
 	}
 
+	
 	// [READ] getProductTicker //
 	static async t_getProductTicker(publicClient, product_id) {
 		// If no params passed set Default
