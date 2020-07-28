@@ -1,13 +1,27 @@
+/**
+ * %%%%%%%%%%%%%%%%%%%% *
+ * %%% CBALGO CLASS %%% *
+ * %%%%%%%%%%%%%%%%%%%% *
+*/
+// [REQUIRE] //
+const CoinbasePro = require('coinbase-pro')
+
+
+// [CB-PUBLIC-CLIENT] //
+const publicClient = new CoinbasePro.PublicClient()
+
+
+/*** [CLASS] ***/
 class CBPublicClient {
 	// [READ] getProducts //
-	static async t_getProducts(publicClient) {
+	static async t_getProducts() {
 		try { return await publicClient.getProducts() }
 		catch(e) { return `Caught Error --> ${e}` }
 	}
 	
 
 	// [READ] getProductOrders //
-	static async t_getProductOrderBook(publicClient, product_id, level) {
+	static async t_getProductOrderBook(product_id, level) {
 		// If no params passed set Default
 		if (!product_id) product_id = 'ETH-USD'
 		if (!level) level = 1
@@ -23,7 +37,7 @@ class CBPublicClient {
 
 	
 	// [READ] getProductTicker //
-	static async t_getProductTicker(publicClient, product_id) {
+	static async t_getProductTicker(product_id) {
 		// If no params passed set Default
 		if (!product_id) product_id = 'ETH-USD'
 
@@ -33,7 +47,7 @@ class CBPublicClient {
 
 
 	// [READ] getProductTrades //
-	static async t_getProductTrades(publicClient, product_id) {
+	static async t_getProductTrades(product_id) {
 		// If no params passed set Default
 		if (!product_id) product_id = 'ETH-USD'
 
@@ -43,7 +57,7 @@ class CBPublicClient {
 
 
 	// [READ] t_getProductTradeStream //
-	static async t_getProductTradeStream(publicClient, product_id, tradesFrom, tradesTo) {
+	static async t_getProductTradeStream(product_id, tradesFrom, tradesTo) {
 		// If no params passed set Default
 		if (!product_id) product_id = 'ETH-USD'
 
@@ -59,7 +73,7 @@ class CBPublicClient {
 
 
 	// [READ] t_getProductHistoricRates //
-	static async t_getProductHistoricRates(publicClient, product_id, granularity) {
+	static async t_getProductHistoricRates(product_id, granularity) {
 		// If no params passed set Default
 		if (!product_id) product_id = 'ETH-USD'
 
@@ -82,7 +96,7 @@ class CBPublicClient {
 
 
 	// [READ] t_getProduct24HrStats //
-	static async t_getProduct24HrStats(publicClient, product_id) {
+	static async t_getProduct24HrStats(product_id) {
 		// If no params passed set Default
 		if (!product_id) product_id = 'ETH-USD'
 
@@ -92,14 +106,14 @@ class CBPublicClient {
 
 
 	// [READ] t_getProduct24HrStats //
-	static async t_getProduct24HrStats(publicClient) {
+	static async t_getProduct24HrStats() {
 		try { return await publicClient.getCurrencies() }
 		catch(e) { return `Caught Error --> ${e}` }
 	}
 
 
 	// [READ] t_getTime //
-	static async t_getTime(publicClient) {
+	static async t_getTime() {
 		try { return await publicClient.getTime() }
 		catch(e) { return `Caught Error --> ${e}` }
 	}
