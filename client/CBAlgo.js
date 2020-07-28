@@ -39,13 +39,13 @@ class CBAlgo {
 
 
 	// [READL-ALL] Within Timeframe //
-	static async readAllWitinTimeFrame(product_id, timeframe) {
+	static async readAllWitinTimeFrame(product_id, timeFrame) {
 		if(!product_id) { product_id = 'ETH-USD' }
 
 		let currentTime = new Date()
 		let pastTime = new Date()
 
-		pastTime.setSeconds(pastTime.getSeconds() - timeframe)
+		pastTime.setSeconds(pastTime.getSeconds() - timeFrame)
 
 		const blocks = await this.connect()
 		const returnedData = await blocks.find(
@@ -63,19 +63,27 @@ class CBAlgo {
 
 
 	// [AVERAGE] //
-	static async getAverage(product_id) {
-		let tradesSum = 0
-		let average = 0
-		let timeframe = 60
-		let trades = await this.readAllWitinTimeFrame(product_id, timeframe)
+	static async getAverage(product_id, timeFrame) {
+		// [INIT] //
+		if (!timeFrame) { timeFrame = 1440 }
+		let sumOfTradePrices = 0
+
+		// [READL-ALL] Within Timeframe //
+		const trades = await this.readAllWitinTimeFrame(product_id, timeFrame)
 		
-		trades.forEach((trade) => { tradesSum = tradesSum + trade.price })
+		// [ARITHMETIC] Sum //
+		trades.forEach((trade) => {
+			sumOfTradePrices = sumOfTradePrices + trade.price
+		})
 
-		average = tradesSum / trades.length
+		// [ARITHMETIC] Average //
+		const average = sumOfTradePrices / trades.length
 
-		console.log('AVERAGE:', average)
-
-		return average
+		return {
+			status: true,
+			timeFrame: timeFrame,
+			average: average,
+		}
 	}
 }
 
