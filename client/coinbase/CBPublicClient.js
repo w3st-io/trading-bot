@@ -22,8 +22,6 @@ class CBPublicClient {
 
 	// [READ] getProductOrders //
 	static async t_getProductOrderBook(product_id, level) {
-		// If no params passed set Default
-		if (!product_id) product_id = 'ETH-USD'
 		if (!level) level = 1
 
 		try {
@@ -38,9 +36,6 @@ class CBPublicClient {
 	
 	// [READ] getProductTicker //
 	static async t_getProductTicker(product_id) {
-		// If no params passed set Default
-		if (!product_id) product_id = 'ETH-USD'
-
 		try { return await publicClient.getProductTicker(product_id) }
 		catch(e) { return `Caught Error --> ${e}` }
 	}
@@ -48,9 +43,6 @@ class CBPublicClient {
 
 	// [READ] getProductTrades //
 	static async t_getProductTrades(product_id) {
-		// If no params passed set Default
-		if (!product_id) product_id = 'ETH-USD'
-
 		try { return await publicClient.getProductTrades(product_id) }
 		catch(e) { return `Caught Error --> ${e}` }
 	}
@@ -58,9 +50,6 @@ class CBPublicClient {
 
 	// [READ] t_getProductTradeStream //
 	static async t_getProductTradeStream(product_id, tradesFrom, tradesTo) {
-		// If no params passed set Default
-		if (!product_id) product_id = 'ETH-USD'
-
 		try {
 			return await publicClient.getProductTradeStream(
 				product_id,
@@ -74,9 +63,6 @@ class CBPublicClient {
 
 	// [READ] t_getProductHistoricRates //
 	static async t_getProductHistoricRates(product_id, granularity) {
-		// If no params passed set Default
-		if (!product_id) product_id = 'ETH-USD'
-
 		if (granularity) {
 			try {
 				return await publicClient.getProductHistoricRates(
@@ -97,9 +83,6 @@ class CBPublicClient {
 
 	// [READ] t_getProduct24HrStats //
 	static async t_getProduct24HrStats(product_id) {
-		// If no params passed set Default
-		if (!product_id) product_id = 'ETH-USD'
-
 		try { return await publicClient.getProduct24HrStats(product_id) }
 		catch(e) { return `Caught Error --> ${e}` }
 	}

@@ -8,12 +8,6 @@ const CoinbasePro = require('coinbase-pro')
 require('dotenv').config()
 
 
-// [INIT-ENV] //
-const key = process.env.KEY || ''
-const secret = process.env.SECRET || ''
-const passphrase = process.env.PASS_PHRASE || ''
-
-
 // [INIT] //
 const coinbaseURI = 'https://api.pro.coinbase.com'
 const sandboxCoinbaseURI = 'https://api-public.sandbox.pro.coinbase.com'
@@ -21,9 +15,9 @@ const sandboxCoinbaseURI = 'https://api-public.sandbox.pro.coinbase.com'
 
 // [CB-AUTH-CLIENT] //
 const authedClient = new CoinbasePro.AuthenticatedClient(
-	key,
-	secret,
-	passphrase,
+	process.env.KEY || '',
+	process.env.SECRET || '',
+	process.env.PASS_PHRASE || '',
 	coinbaseURI
 )
 
@@ -47,6 +41,12 @@ class CBAuthClient {
 		}
 	
 		try { return await authedClient.placeOrder(params) }
+		catch(e) { console.log(`Caught Error --> ${e}`) }
+	}
+
+	// [GET-ORDERS] //
+	static async t_getOrders() {
+		try { return await authedClient.getOrders() }
 		catch(e) { console.log(`Caught Error --> ${e}`) }
 	}
 }

@@ -11,19 +11,15 @@ require('dotenv').config()
 class TickersCollection {
 	// [MONGODB-CONNECT] //
 	static async connect() {
-		const uri = process.env.MONGO_URI
-		const db_name = process.env.DB || 'trader'
-		const c_name = 'tickers'
-		
 		const client = await mongodb.MongoClient.connect(
-			uri,
+			process.env.MONGO_URI,
 			{
 				useNewUrlParser: true,
 				useUnifiedTopology: true
 			}	
 		)
 
-		return client.db(db_name).collection(c_name)
+		return client.db('trader').collection('tickers')
 	}
 
 

@@ -4,43 +4,65 @@
  * %%%%%%%%%%%%%%%%%%%% *
 */
 // [REQUIRE] Personal //
-const TickersCollection = require('./collections/TickersCollection')
+const CBAuthClient = require('./coinbase/CBAuthClient')
+const CBPublicClient = require('./coinbase/CBPublicClient')
+const MathFunctions = require('./MathFunctions')
 
 
 class Algo {
 	// [ALGO] Average //
-	static async getAverage(product_id, timeFrame) {
+	static async algo(product_id) {
+		// If no params passed set Default
+		if (!product_id) product_id = 'ETH-USD'
+
 		// [INIT] //
-		let sumOfTradePrices = 0
+		const timeFrames = [60, 300, 1800, 3600, 43200, 86400]
+		const grossProfitMarginPct = 0.02
+		const minimumInt = 0.002 // smallest interval we’ll trade at
+		const moderateInt = 0.004 // moderate interval we’ll trade at
+		const maximumInt = 0.008 // largest interval we’ll trade at
 
-		try {
-			// [READL-ALL] Within Timeframe //
-			const trades = await TickersCollection.readAllWitinTimeFrame(
+
+		// [INIT] To Be Determined //
+		let timeFramePriceAvgs = []
+		let grossProfitMarginPrice = 0
+		let count = 0
+		
+
+		// For Each timeFrame in timeFrames
+		for (let i = 0; i < timeFrames.length; i++) {
+			timeFramePriceAvgs[i] = await MathFunctions.getAverage(
 				product_id,
-				timeFrame
+				timeFrames[i]
 			)
-			
-			// [ARITHMETIC] Sum //
-			trades.forEach((trade) => {
-				sumOfTradePrices = sumOfTradePrices + trade.price
-			})
+		}
 
-			return {
-				status: true,
-				message: '',
-				timeFrame: timeFrame,
-				totalTrades: trades.length,
-				average: (sumOfTradePrices / trades.length),
+
+		// Get Current Price of Asset
+		const currentPrice = await CBPublicClient.t_getProductTicker(product_id)
+
+
+		// Get My Orders
+		const myOrders = await CBAuthClient.t_getOrders()
+
+
+		// [ARITHMETIC] //
+		grossProfitMarginPrice = currentPrice.price * (1 + grossProfitMarginPct)
+
+
+		// For each timeFramePriceAvg in timeFramePriceAvgs
+		timeFramePriceAvgs.forEach((timeFramePriceAvg) => {
+			if (timeFramePriceAvg.average > currentPrice.price) {
+				count = count + 1
 			}
-		}
-		catch(e) {
-			return {
-				status: false,
-				message: `Caught Error --> ${e}`,
-				timeFrame: null,
-				average: average,
-			}
-		}
+		})
+
+
+		// [LOG] //
+		console.log('timeFramePriceAvgs:', timeFramePriceAvgs)
+		console.log('currentPrice:', currentPrice.price)
+		//console.log('myOrders:', myOrders)
+		console.log('count:', count)
 	}
 }
 
