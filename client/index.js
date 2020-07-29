@@ -11,5 +11,5 @@ require('dotenv').config()
 const Algo = require('./Algo')
 
 
-/***** [TRADING-BOT-START] *****/
+// [TRADING-BOT-START] //
 Algo.algo()
