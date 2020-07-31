@@ -4,12 +4,12 @@
  * %%%%%%%%%%%%%%%%%%%%%%%% *
 */
 // [REQUIRE] //
-require('dotenv').config()
-
-
 // [REQUIRE] Personal //
 const Algo = require('./Algo')
 
 
+
+
 // [TRADING-BOT-START] //
-Algo.algo()
+tradeAmount = 50
+Algo.algo(null, tradeAmount)
