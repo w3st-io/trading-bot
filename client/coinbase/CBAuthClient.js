@@ -39,7 +39,8 @@ class CBAuthClient {
 			product_id: product_id,
 		}
 
-		authedClient.buy(buyParams)
+		try { return await authedClient.buy(buyParams) }
+		catch (e) { console.log(`"t_buy" Caught Error --> ${e}`) }
 	}
 
 	// [SELL] //
@@ -50,7 +51,8 @@ class CBAuthClient {
 			product_id: product_id,
 		}
 
-		authedClient.sell(buyParams)
+		try { return await authedClient.sell(buyParams) }
+		catch (e) { console.log(`"t_buy" Caught Error --> ${e}`) }
 	}
 
 	
@@ -64,14 +66,22 @@ class CBAuthClient {
 		}
 	
 		try { return await authedClient.placeOrder(params) }
-		catch(e) { console.log(`Caught Error --> ${e}`) }
+		catch(e) { console.log(`"t_placeOrder" Caught Error --> ${e}`) }
 	}
 
 
 	// [GET-ORDERS] //
 	static async t_getOrders() {
 		try { return await authedClient.getOrders() }
-		catch(e) { console.log(`Caught Error --> ${e}`) }
+		catch(e) { console.log(`"t_getOrders" Caught Error --> ${e}`) }
+	}
+
+	// [GET-FILLS]
+	static async t_getFills(product_id) {
+		const params = { product_id: product_id }
+
+		try { return await authedClient.getFills(params) }
+		catch(e) { console.log(`"t_getFills" Caught Error --> ${e}`) }
 	}
 }
 
