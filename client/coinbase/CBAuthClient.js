@@ -18,7 +18,7 @@ const authedClient = new CoinbasePro.AuthenticatedClient(
 	process.env.KEY || '',
 	process.env.SECRET || '',
 	process.env.PASS_PHRASE || '',
-	coinbaseURI
+	sandboxCoinbaseURI
 )
 
 
@@ -75,6 +75,7 @@ class CBAuthClient {
 		try { return await authedClient.getOrders() }
 		catch(e) { console.log(`"t_getOrders" Caught Error --> ${e}`) }
 	}
+	
 
 	// [GET-FILLS]
 	static async t_getFills(product_id) {

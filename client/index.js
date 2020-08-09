@@ -11,4 +11,10 @@ const Algo = require('./Algo')
 
 // [TRADING-BOT-START] //
 tradeAmount = 50
-Algo.algo(null, tradeAmount)
+async function run() {	
+	//while (1 == 1) {
+		await Algo.algo(null, tradeAmount)
+	//}
+}
+
+run()

@@ -1,7 +1,7 @@
 /**
- * %%%%%%%%%%%%%%%%%%%% *
- * %%% CBALGO CLASS %%% *
- * %%%%%%%%%%%%%%%%%%%% *
+ * %%%%%%%%%%%%%% *
+ * %%% CBALGO %%% *
+ * %%%%%%%%%%%%%% *
 */
 // [REQUIRE] Personal //
 const CBAuthClient = require('./coinbase/CBAuthClient')
@@ -34,7 +34,7 @@ async function algo(product_id, tradeAmount) {
 	let alreadyBought = false
 
 
-	// [GET] Average(s) //
+	// [AVERAGES][GET] Average(s) //
 	for (let i = 0; i < timeFrames.length; i++) {
 		try {
 			timeFramePriceAvgs[i] = await MathFunctions.getAverage(
@@ -46,7 +46,7 @@ async function algo(product_id, tradeAmount) {
 	}
 
 
-	// [GET] currentPrice // [GET] myOrders //
+	// [CURRENT-PRICE][GET] // [MY-ORDERS][GET] // [MY-FILLS][GET] //
 	try {
 		currentPrice = await CBPublicClient.t_getProductTicker(product_id)
 		console.log('currentPrice:', currentPrice.price)
@@ -60,25 +60,28 @@ async function algo(product_id, tradeAmount) {
 	catch(e) { console.log(`Caught Error --> ${e}`) }
 
 
-	// [ARITHMETIC] currentSellPrice //
+	// [CURRENT-SELL-PRICE][ARITHMETIC] currentSellPrice //
 	currentSellPrice = currentPrice.price * (1 + grossProfitMarginPct)
 	console.log('currentSellPrice:', currentSellPrice)
 
 
-	// [ARITHMETIC] Determine Count //
-	timeFramePriceAvgs.forEach(timeFramePriceAvg => {
-		if (timeFramePriceAvg.average > currentPrice.price) {
-			count = count + 1					
-		}
-		
-		console.log(
-			'timeframe:', timeFramePriceAvg.timeFrame, 
-			'average:', timeFramePriceAvg.average
-		)
-	})
+	// [COUNT][ARITHMETIC] Determine Count //
+	if (timeFramePriceAvgs) {
+		timeFramePriceAvgs.forEach(timeFramePriceAvg => {
+			if (timeFramePriceAvg.average > currentPrice.price) {
+				count = count + 1					
+			}
+			
+			console.log(
+				'timeframe:', timeFramePriceAvg.timeFrame, 
+				'average:', timeFramePriceAvg.average
+			)
+		})
+	}
+	else { count = count + 1 }
 
 
-	// [COUNT][ARITHMETIC] Determine Interval //
+	// [CURRENT-INTERVAL] Determine Interval //
 	if (count <= 1) { currentInterval = maximumInterval }
 	else if (count <= 4) { currentInterval = moderateInterval }
 	else if (count <= 6) { currentInterval = minimumInterval }
@@ -87,27 +90,33 @@ async function algo(product_id, tradeAmount) {
 
 
 	
-	// ??? [DETERMIN] if we already bought //
-	myOrders.forEach(myOrder => {
-		if (myOrder.product_id == product_id) {
-			// [INIT] //
-			const topPriceRange = currentSellPrice * (1 + currentInterval)
-			const bottomPriceRange = (currentSellPrice * (currentInterval - 1) * -1)
+	// [ALREADY-BOUGHT] if we already bought //
+	if (myOrders) {
+		myOrders.forEach(myOrder => {
+			if (myOrder.product_id == product_id) {
+				// [INIT] //
+				const topPriceRange = currentSellPrice * (1 + currentInterval)
+				const bottomPriceRange = (currentSellPrice * (currentInterval - 1) * -1)
 
-			// if ANY of the orders are within the range set alreadyBought
-			//  bottom <= myO <= top
-			if (myOrder.price >= bottomPriceRange && myOrder.price <= topPriceRange) {
-				alreadyBought = true
+				// if ANY of the orders are within the range set alreadyBought
+				//  bottom <= myO <= top
+				if (myOrder.price >= bottomPriceRange && myOrder.price <= topPriceRange) {
+					alreadyBought = true
+				}
+				else { alreadyBought = false }
+
+				// [LOG] //
+				console.log('topPriceRange:', topPriceRange)
+				console.log('bottomPriceRange:', bottomPriceRange)
+				console.log('myOrder.price:', myOrder.price)
 			}
-			else { alreadyBought = false }
+		})
+	}
+	else {
+		// If their are no orders!
+		alreadyBought = false
+	}
 
-			// [LOG] //
-			console.log('topPriceRange:', topPriceRange)
-			console.log('bottomPriceRange:', bottomPriceRange)
-			console.log('myOrder.price:', myOrder.price)
-		}
-	})
-	
 
 	// [] //
 	if (alreadyBought == false) {
@@ -129,14 +138,14 @@ async function algo(product_id, tradeAmount) {
 	}
 	else { console.log(`Will NOT buy @ ${currentPrice.price}`) }
 
-	// [LOG] //
+
+	// [MAIN-LOG] //
 	//console.log('timeFramePriceAvgs:', timeFramePriceAvgs)
 	//console.log('currentPrice:', currentPrice.price)
 	//console.log('myOrders:', myOrders)
 	//console.log('count:', count)
 }
 
-// [EXPORT] //
 // [EXPORT] //
 module.exports = {
 	algo,
