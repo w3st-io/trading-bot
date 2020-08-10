@@ -56,6 +56,20 @@ class CBAuthClient {
 		try { return await authedClient.getAccountHistory(accountID) }
 		catch (e) { console.log(`getAccountHistory: Caught Error --> ${e}`) }
 	}
+
+
+	// [GET-ACCOUNT-TRANSFERS] //
+	static async t_getAccountTransfers(accountID) {
+		try { return await authedClient.getAccountTransfers(accountID) }
+		catch (e) { console.log(`getAccountTransfers: Caught Error --> ${e}`) }
+	}
+
+
+	// [GET-ACCOUNT-HOLDS] //
+	static async t_getAccountHolds(accountID) {
+		try { return await authedClient.getAccountHolds(accountID) }
+		catch (e) { console.log(`getAccountHolds: Caught Error --> ${e}`) }
+	}
 	
 
 	// [BUY] //
@@ -97,10 +111,39 @@ class CBAuthClient {
 	}
 
 
+	// [CANCEL-ORDER] (Single) //
+	static async t_cancelOrder(orderID) {
+		try { return await authedClient.cancelOrder(orderID) }
+		catch(e) { console.log(`cancelOrder: Caught Error --> ${e}`) }
+	}
+
+
+	// [CANCEL-ORDERS] Cancel "Open" Orders //
+	static async t_cancelOrders() {
+		try { return await authedClient.cancelOrders() }
+		catch(e) { console.log(`cancelOrders: Caught Error --> ${e}`) }
+	}
+
+
+	// [CANCEL-ALL-ORDERS] //
+	static async t_cancelOrder(product_id) {
+		const params = { product_id: product_id }
+		try { return await authedClient.cancelAllOrders(params) }
+		catch(e) { console.log(`getOrders: Caught Error --> ${e}`) }
+	}
+
+
 	// [GET-ORDERS] //
 	static async t_getOrders() {
 		try { return await authedClient.getOrders() }
 		catch(e) { console.log(`getOrders: Caught Error --> ${e}`) }
+	}
+
+
+	// [GET-ORDER] (Single) //
+	static async t_getOrder(orderID) {
+		try { return await authedClient.getOrder(orderID) }
+		catch(e) { console.log(`getOrder: Caught Error --> ${e}`) }
 	}
 	
 
