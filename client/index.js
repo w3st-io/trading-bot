@@ -17,4 +17,5 @@ async function run() {
 	//}
 }
 
+// Call the async function
 run()
