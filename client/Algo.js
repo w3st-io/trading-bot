@@ -10,9 +10,9 @@ const MathFunctions = require('./MathFunctions')
 
 
 // [ALGO] Average //
-async function algo(product_id, tradeAmount) {
+async function gregsAlgo(product_id, tradeAmount) {
 	// [SET-PRODUCT-ID] If no params passed set Default
-	if (!product_id) product_id = 'ETH-USD'
+	if (!product_id) { return { status: false, message: 'No "product_id" Passed' } }
 
 
 	// [INIT-CONST] //
@@ -90,7 +90,7 @@ async function algo(product_id, tradeAmount) {
 
 
 	
-	// [ALREADY-BOUGHT] if we already bought //
+	// [ALREADY-BOUGHT] //
 	if (myOrders) {
 		myOrders.forEach(myOrder => {
 			if (myOrder.product_id == product_id) {
@@ -99,7 +99,6 @@ async function algo(product_id, tradeAmount) {
 				const bottomPriceRange = (currentSellPrice * (currentInterval - 1) * -1)
 
 				// if ANY of the orders are within the range set alreadyBought
-				//  bottom <= myO <= top
 				if (myOrder.price >= bottomPriceRange && myOrder.price <= topPriceRange) {
 					alreadyBought = true
 				}
@@ -112,17 +111,12 @@ async function algo(product_id, tradeAmount) {
 			}
 		})
 	}
-	else {
-		// If their are no orders!
-		alreadyBought = false
-	}
+	else { alreadyBought = false } // If their are no orders!
 
 
 	// [] //
 	if (alreadyBought == false) {
 		// Try to execute the trade
-		console.log(`Will buy @ ${currentPrice.price}`)
-
 		/*
 		try {
 			await CBAuthClient.t_placeOrder(
@@ -135,8 +129,10 @@ async function algo(product_id, tradeAmount) {
 		}
 		catch (e) { console.log(`Trade Execution Caught Error --> ${e}`) }
 		*/
+
+		return { status: true, message: `Bought @ ${currentPrice.price}` }
 	}
-	else { console.log(`Will NOT buy @ ${currentPrice.price}`) }
+	else { return { status: true, message: `Bought @ ${currentPrice.price}` } }
 
 
 	// [MAIN-LOG] //
@@ -148,5 +144,5 @@ async function algo(product_id, tradeAmount) {
 
 // [EXPORT] //
 module.exports = {
-	algo,
+	gregsAlgo,
 }

@@ -32,7 +32,7 @@ class CBAuthClient {
 
 
 	// [GET-PAYMENT-METHOD] //
-	static async getPaymentMethods() {
+	static async t_getPaymentMethods() {
 		try { return await authedClient.getPaymentMethods() }
 		catch (e) { console.log(`getPaymentMethods: Caught Error --> ${e}`) }
 	}

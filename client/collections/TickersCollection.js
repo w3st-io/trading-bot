@@ -11,15 +11,18 @@ require('dotenv').config()
 class TickersCollection {
 	// [MONGODB-CONNECT] //
 	static async connect() {
-		const client = await mongodb.MongoClient.connect(
-			process.env.MONGO_URI,
-			{
-				useNewUrlParser: true,
-				useUnifiedTopology: true
-			}	
-		)
-
-		return client.db('trader').collection('tickers')
+		try {
+			const client = await mongodb.MongoClient.connect(
+				process.env.MONGO_URI,
+				{
+					useNewUrlParser: true,
+					useUnifiedTopology: true
+				}	
+			)
+	
+			return client.db('trader').collection('tickers')
+		}
+		catch (e) { `connect: Caught Error --> ${e}` }
 	}
 
 
@@ -28,14 +31,12 @@ class TickersCollection {
 		if(!product_id) { product_id = 'ETH-USD' }
 
 		const blocks = await this.connect()
-		const returnedData = await blocks.find({ product_id: product_id }).toArray()
-			
-		return returnedData
+		return await blocks.find({ product_id: product_id }).toArray()
 	}
 
 
 	// [READL-ALL] Within Timeframe //
-	static async readAllWitinTimeFrame(product_id, timeFrame) {
+	static async readAllWithinTimeFrame(product_id, timeFrame) {
 		if(!product_id) { product_id = 'ETH-USD' }
 		let currentTime = new Date()
 		let pastTime = new Date()

@@ -15,7 +15,7 @@ class MathFunctions {
 
 		try {
 			// [READL-ALL] Within Timeframe //
-			const trades = await TickersCollection.readAllWitinTimeFrame(
+			const trades = await TickersCollection.readAllWithinTimeFrame(
 				product_id,
 				timeFrame
 			)
