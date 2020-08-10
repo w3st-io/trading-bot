@@ -28,33 +28,34 @@ class TickersCollection {
 
 	// [READ-ALL-ALL] //
 	static async readAllAll(product_id) {
-		if(!product_id) { product_id = 'ETH-USD' }
-
-		const blocks = await this.connect()
-		return await blocks.find({ product_id: product_id }).toArray()
+		if (product_id) {	
+			const blocks = await this.connect()
+			return await blocks.find({ product_id: product_id }).toArray()
+		}
 	}
 
 
 	// [READL-ALL] Within Timeframe //
 	static async readAllWithinTimeFrame(product_id, timeFrame) {
-		if(!product_id) { product_id = 'ETH-USD' }
-		let currentTime = new Date()
-		let pastTime = new Date()
+		if(product_id) {
+			let currentTime = new Date()
+			let pastTime = new Date()
+			
+			// [ARITHMETIC] Calculate Past Time //
+			pastTime.setSeconds(pastTime.getSeconds() - timeFrame)
 
-		// [ARITHMETIC] Calculate Past Time //
-		pastTime.setSeconds(pastTime.getSeconds() - timeFrame)
-
-		const blocks = await this.connect()
-
-		return await blocks.find(
-			{
-				product_id: product_id,
-				time: {
-					$gte: pastTime,
-					$lt: currentTime
+			const blocks = await this.connect()
+			
+			return await blocks.find(
+				{
+					product_id: product_id,
+					time: {
+						$gte: pastTime,
+						$lt: currentTime
+					}
 				}
-			}
-		).toArray()
+			).toArray()
+		}
 	}
 }
 

@@ -79,6 +79,7 @@ async function gregsAlgo(product_id, tradeAmount) {
 		})
 	}
 	else { count = count + 1 }
+	console.log('count:', count)
 
 
 	// [CURRENT-INTERVAL] Determine Interval //
@@ -86,7 +87,7 @@ async function gregsAlgo(product_id, tradeAmount) {
 	else if (count <= 4) { currentInterval = moderateInterval }
 	else if (count <= 6) { currentInterval = minimumInterval }
 	else { console.log(`Error Count Is: ${count}`) }
-	console.log('count:', count)
+	console.log('currentInterval:', currentInterval)
 
 
 	
@@ -115,9 +116,9 @@ async function gregsAlgo(product_id, tradeAmount) {
 
 
 	// [] //
-	if (alreadyBought == false) {
-		// Try to execute the trade
+	if (!alreadyBought) {
 		/*
+		// [EXECUTE-TRADE] //
 		try {
 			await CBAuthClient.t_placeOrder(
 				'Buy',
