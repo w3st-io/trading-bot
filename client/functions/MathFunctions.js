@@ -1,10 +1,12 @@
 /**
- * %%%%%%%%%%%%%%%%%%%% *
- * %%% CBALGO CLASS %%% *
- * %%%%%%%%%%%%%%%%%%%% *
+ * %%%%%%%%%%%%%%%%%%%%%%%%%%%% *
+ * %%% MATH FUNCTIONS CLASS %%% *
+ * %%%%%%%%%%%%%%%%%%%%%%%%%%%% *
+ * Basic Math Functions
+ * Should not contain algorithmic stuff
 */
 // [REQUIRE] Personal //
-const TickersCollection = require('./collections/TickersCollection')
+const TickersCollection = require('../collections/TickersCollection')
 
 
 class MathFunctions {

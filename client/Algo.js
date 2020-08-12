@@ -6,7 +6,7 @@
 // [REQUIRE] Personal //
 const CBAuthClient = require('./coinbase/CBAuthClient')
 const CBPublicClient = require('./coinbase/CBPublicClient')
-const MathFunctions = require('./MathFunctions')
+const MathFunctions = require('./functions/MathFunctions')
 
 
 // [ALGO] Average //
@@ -28,7 +28,7 @@ async function gregsAlgo(product_id, tradeAmount) {
 	let currentPrice = {}
 	let myOrders = []
 	let myFills = []
-	let currentSellPrice = null
+	let sellPrice = null
 	let count = 0
 	let currentInterval = 0
 	let alreadyBought = false
@@ -60,26 +60,13 @@ async function gregsAlgo(product_id, tradeAmount) {
 	catch(e) { console.log(`Caught Error --> ${e}`) }
 
 
-	// [CURRENT-SELL-PRICE][ARITHMETIC] currentSellPrice //
-	currentSellPrice = currentPrice.price * (1 + grossProfitMarginPct)
-	console.log('currentSellPrice:', currentSellPrice)
+	// [SELL-PRICE][ARITHMETIC] sellPrice //
+	sellPrice = currentPrice.price * (1 + grossProfitMarginPct)
+	console.log('sellPrice:', sellPrice)
 
 
 	// [COUNT][ARITHMETIC] Determine Count //
-	if (timeFramePriceAvgs) {
-		timeFramePriceAvgs.forEach(timeFramePriceAvg => {
-			if (timeFramePriceAvg.average > currentPrice.price) {
-				count = count + 1					
-			}
-			
-			console.log(
-				'timeframe:', timeFramePriceAvg.timeFrame, 
-				'average:', timeFramePriceAvg.average
-			)
-		})
-	}
-	else { count = count + 1 }
-	console.log('count:', count)
+	count = algoFunctions.determinCount(timeFramePriceAvgs, currentPrice)
 
 
 	// [CURRENT-INTERVAL] Determine Interval //
@@ -92,27 +79,13 @@ async function gregsAlgo(product_id, tradeAmount) {
 
 	
 	// [ALREADY-BOUGHT] //
-	if (myOrders) {
-		myOrders.forEach(myOrder => {
-			if (myOrder.product_id == product_id) {
-				// [INIT] //
-				const topPriceRange = currentSellPrice * (1 + currentInterval)
-				const bottomPriceRange = (currentSellPrice * (currentInterval - 1) * -1)
-
-				// if ANY of the orders are within the range set alreadyBought
-				if (myOrder.price >= bottomPriceRange && myOrder.price <= topPriceRange) {
-					alreadyBought = true
-				}
-				else { alreadyBought = false }
-
-				// [LOG] //
-				console.log('topPriceRange:', topPriceRange)
-				console.log('bottomPriceRange:', bottomPriceRange)
-				console.log('myOrder.price:', myOrder.price)
-			}
-		})
-	}
-	else { alreadyBought = false } // If their are no orders!
+	alreadyBought = algoFunctions.determinAlreadyBought(
+		myOrders,
+		product_id,
+		sellPrice,
+		currentInterval
+	)
+	console.log('alreadyBought:', alreadyBought)
 
 
 	// [] //
