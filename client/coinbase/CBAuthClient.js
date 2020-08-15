@@ -18,7 +18,7 @@ const authedClient = new CoinbasePro.AuthenticatedClient(
 	process.env.KEY || '',
 	process.env.SECRET || '',
 	process.env.PASS_PHRASE || '',
-	sandboxCoinbaseURI
+	coinbaseURI
 )
 
 

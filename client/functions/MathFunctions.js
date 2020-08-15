@@ -44,5 +44,6 @@ class MathFunctions {
 	}
 }
 
+
 // [EXPORT] //
 module.exports = MathFunctions

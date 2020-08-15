@@ -6,7 +6,7 @@
 // [REQUIRE] Personal //
 const CBAuthClient = require('./coinbase/CBAuthClient')
 const CBPublicClient = require('./coinbase/CBPublicClient')
-const MathFunctions = require('./functions/MathFunctions')
+const AlgoFunctions = require('./functions/AlgoFunctions')
 
 
 // [ALGO] Average //
@@ -15,15 +15,12 @@ async function gregsAlgo(product_id, tradeAmount) {
 	if (!product_id) { return { status: false, message: 'No "product_id" Passed' } }
 
 
-	// [INIT-CONST] //
+	// [INIT] // CONST //
 	const timeFrames = [60, 300, 1800, 3600, 43200, 86400]
 	const grossProfitMarginPct = 0.02
-	const minimumInterval = 0.002 // smallest interval we’ll trade at
-	const moderateInterval = 0.004 // moderate interval we’ll trade at
-	const maximumInterval = 0.008 // largest interval we’ll trade at
-	
-
-	// [INIT] To Be Determined //
+	const maxInterval = 0.008 // Largest Trade Interval
+	const medInterval = 0.004 // Moderate Trade Interval
+	const minInterval = 0.002 // Smallest Trade Interval
 	let timeFramePriceAvgs = []
 	let currentPrice = {}
 	let myOrders = []
@@ -32,54 +29,44 @@ async function gregsAlgo(product_id, tradeAmount) {
 	let count = 0
 	let currentInterval = 0
 	let alreadyBought = false
-
-
-	// [AVERAGES][GET] Average(s) //
-	for (let i = 0; i < timeFrames.length; i++) {
-		try {
-			timeFramePriceAvgs[i] = await MathFunctions.getAverage(
-				product_id,
-				timeFrames[i]
-			)
-		}
-		catch(e) { console.log(`Caught Error --> ${e}`) }
-	}
-
-
-	// [CURRENT-PRICE][GET] // [MY-ORDERS][GET] // [MY-FILLS][GET] //
 	try {
+		// [CURRENT-PRICE][GET] // [MY-ORDERS][GET] // [MY-FILLS][GET] //
 		currentPrice = await CBPublicClient.t_getProductTicker(product_id)
-		console.log('currentPrice:', currentPrice.price)
-
 		myOrders = await CBAuthClient.t_getOrders()
-		//console.log('myOrders:', myOrders)
-
 		myFills = await CBAuthClient.t_getFills(product_id)
-		//console.log('myFills:', myFills)
 	}
-	catch(e) { console.log(`Caught Error --> ${e}`) }
+	catch(e) { console.log(`Algo: Caught Error --> ${e}`) }
 
 
 	// [SELL-PRICE][ARITHMETIC] sellPrice //
-	sellPrice = currentPrice.price * (1 + grossProfitMarginPct)
-	console.log('sellPrice:', sellPrice)
+	sellPrice = AlgoFunctions.determinSellPrice(
+		currentPrice.price,
+		grossProfitMarginPct
+	)
+
+
+	// [TIME-FRAME-PRICE-AVGS][GET] Average(s) //
+	timeFramePriceAvgs = await AlgoFunctions.determinTimeFramePriceAvgs(
+		timeFrames,
+		product_id
+	)
 
 
 	// [COUNT][ARITHMETIC] Determine Count //
-	count = algoFunctions.determinCount(timeFramePriceAvgs, currentPrice)
+	count = AlgoFunctions.determinCount(timeFramePriceAvgs, currentPrice)
 
 
 	// [CURRENT-INTERVAL] Determine Interval //
-	if (count <= 1) { currentInterval = maximumInterval }
-	else if (count <= 4) { currentInterval = moderateInterval }
-	else if (count <= 6) { currentInterval = minimumInterval }
-	else { console.log(`Error Count Is: ${count}`) }
-	console.log('currentInterval:', currentInterval)
-
+	currentInterval = AlgoFunctions.determinCurrentInterval(
+		count,
+		maxInterval,
+		medInterval,
+		minInterval
+	)
 
 	
 	// [ALREADY-BOUGHT] //
-	alreadyBought = algoFunctions.determinAlreadyBought(
+	alreadyBought = AlgoFunctions.determinAlreadyBought(
 		myOrders,
 		product_id,
 		sellPrice,
@@ -106,14 +93,13 @@ async function gregsAlgo(product_id, tradeAmount) {
 
 		return { status: true, message: `Bought @ ${currentPrice.price}` }
 	}
-	else { return { status: true, message: `Bought @ ${currentPrice.price}` } }
+	else { return { status: true, message: `Not Bought @ ${currentPrice.price}` } }
 
 
-	// [MAIN-LOG] //
-	//console.log('timeFramePriceAvgs:', timeFramePriceAvgs)
-	//console.log('currentPrice:', currentPrice.price)
+	// [LOG] //
+	console.log('currentPrice:', currentPrice.price)
 	//console.log('myOrders:', myOrders)
-	//console.log('count:', count)
+	//console.log('myFills:', myFills)
 }
 
 // [EXPORT] //

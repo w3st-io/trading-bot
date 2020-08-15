@@ -4,7 +4,7 @@
   "description": "automated coinbase trader",
   "main": "index.js",
   "scripts": {
-    "client": "nodemon index"
+    "serve": "nodemon index"
   },
   "author": "Aleem Ahmed, Gregory P. Kahanec",
   "license": "MIT",
