@@ -4,6 +4,8 @@
  * %%%%%%%%%%%%%%%%%%%%%%%%%%%% *
 */
 // [REQUIRE] Perosnal //
+const CBPublicClient = require('../coinbase/CBPublicClient')
+const CBAuthClient = require('../coinbase/CBAuthClient')
 const MathFunctions = require('./MathFunctions')
 
 
@@ -40,8 +42,13 @@ class AlgoFunctions {
 
 
 	// [COUNT] //
-	static determinCount(timeFramePriceAvgs, currentPrice) {
+	static async determinCount(timeFramePriceAvgs) {
 		let count = 0
+		let currentPrice = {}
+
+		// [CURRENT-PRICE][GET] //
+		try { currentPrice = await CBPublicClient.t_getProductTicker(product_id) }
+		catch(e) { `AlgoFunctions: Caught Error --> ${e}` }
 
 		if (timeFramePriceAvgs) {
 			for (let i = 0; i < timeFramePriceAvgs.length; i++) {
@@ -63,7 +70,7 @@ class AlgoFunctions {
 
 
 	// [CURRENT-INTERVAL] Determine Interval //
-	static determinCurrentInterval(count, maxInterval, medInterval, minInterval) {
+	static async determinCurrentInterval(count, maxInterval, medInterval, minInterval) {
 		let currentInterval = ''
 
 		if (count <= 1) currentInterval = maxInterval
@@ -79,9 +86,15 @@ class AlgoFunctions {
 
 
 	// [ALREADY-BOUGHT] //
-	static determinAlreadyBought(myOrders, product_id, sellPrice, currentInterval) {
+	static async determinAlreadyBought(product_id, sellPrice, currentInterval) {
 		let alreadyBought = null
+		let myOrders = []
 
+		// [MY-ORDERS][GET] //
+		try { myOrders = await CBAuthClient.t_getOrders() }
+		catch(e) { `AlgoFunctions: Caught Error --> ${e}` }
+
+		console.log('sdfsdfsdfsd', sellPrice);
 		// If Orders Exist.. //
 		if (myOrders) {
 			myOrders.forEach(myOrder => {
@@ -108,6 +121,17 @@ class AlgoFunctions {
 		else { alreadyBought = false } // If their are no orders!
 
 		return alreadyBought
+	}
+
+	static async determinSellSize(tradeAmount) {
+		let myFills = []
+
+		// [MY-FILLS][GET] //
+		try { myFills = await CBAuthClient.t_getFills(product_id) }
+		catch(e) { `AlgoFunctions: Caught Error --> ${e}` }
+
+		console.log('myFills:', myFills)
+		// multiple Executed price and fillsize
 	}
 }
 

@@ -21,43 +21,35 @@ async function gregsAlgo(product_id, tradeAmount) {
 	const maxInterval = 0.008 // Largest Trade Interval
 	const medInterval = 0.004 // Moderate Trade Interval
 	const minInterval = 0.002 // Smallest Trade Interval
-	let timeFramePriceAvgs = []
 	let currentPrice = {}
-	let myOrders = []
-	let myFills = []
-	let sellPrice = null
-	let count = 0
-	let currentInterval = 0
-	let alreadyBought = false
+
 	try {
-		// [CURRENT-PRICE][GET] // [MY-ORDERS][GET] // [MY-FILLS][GET] //
+		// [CURRENT-PRICE][GET] // [MY-FILLS][GET] //
 		currentPrice = await CBPublicClient.t_getProductTicker(product_id)
-		myOrders = await CBAuthClient.t_getOrders()
-		myFills = await CBAuthClient.t_getFills(product_id)
 	}
 	catch(e) { console.log(`Algo: Caught Error --> ${e}`) }
 
 
 	// [SELL-PRICE][ARITHMETIC] sellPrice //
-	sellPrice = AlgoFunctions.determinSellPrice(
+	const sellPrice = await AlgoFunctions.determinSellPrice(
 		currentPrice.price,
 		grossProfitMarginPct
 	)
 
 
 	// [TIME-FRAME-PRICE-AVGS][GET] Average(s) //
-	timeFramePriceAvgs = await AlgoFunctions.determinTimeFramePriceAvgs(
+	const timeFramePriceAvgs = await AlgoFunctions.determinTimeFramePriceAvgs(
 		timeFrames,
 		product_id
 	)
 
 
 	// [COUNT][ARITHMETIC] Determine Count //
-	count = AlgoFunctions.determinCount(timeFramePriceAvgs, currentPrice)
+	const count = await AlgoFunctions.determinCount(timeFramePriceAvgs)
 
 
 	// [CURRENT-INTERVAL] Determine Interval //
-	currentInterval = AlgoFunctions.determinCurrentInterval(
+	const currentInterval = await AlgoFunctions.determinCurrentInterval(
 		count,
 		maxInterval,
 		medInterval,
@@ -66,8 +58,7 @@ async function gregsAlgo(product_id, tradeAmount) {
 
 	
 	// [ALREADY-BOUGHT] //
-	alreadyBought = AlgoFunctions.determinAlreadyBought(
-		myOrders,
+	const alreadyBought = await AlgoFunctions.determinAlreadyBought(
 		product_id,
 		sellPrice,
 		currentInterval
@@ -77,8 +68,8 @@ async function gregsAlgo(product_id, tradeAmount) {
 
 	// [] //
 	if (!alreadyBought) {
+		// [EXECUTE-TRADE] Buy Order //
 		/*
-		// [EXECUTE-TRADE] //
 		try {
 			await CBAuthClient.t_placeOrder(
 				'Buy',
@@ -90,10 +81,23 @@ async function gregsAlgo(product_id, tradeAmount) {
 		}
 		catch (e) { console.log(`Trade Execution Caught Error --> ${e}`) }
 		*/
+		// [SIZE] //
+		const sellSize = await AlgoFunctions.determinSellSize(tradeAmount)
+		
+		// [EXECUTE-TRADE] Sell Order //
 
-		return { status: true, message: `Bought @ ${currentPrice.price}` }
+
+		return {
+			status: true,
+			message: `Bought @ ${currentPrice.price}`
+		}
 	}
-	else { return { status: true, message: `Not Bought @ ${currentPrice.price}` } }
+	else {
+		return {
+			status: true,
+			message: `Not Bought @ ${currentPrice.price}`
+		}
+	}
 
 
 	// [LOG] //
