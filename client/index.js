@@ -9,7 +9,7 @@ const Algo = require('./Algo')
 
 // Product_id & Trade Amount //
 product_id = 'ETH-USD'
-tradeAmount = 50
+tradeAmount = 70
 
 
 // [TRADING-BOT-START] //

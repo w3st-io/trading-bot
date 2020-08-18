@@ -17,11 +17,11 @@ async function gregsAlgo(product_id, tradeAmount) {
 
 	// [INIT] // CONST //
 	const timeFrames = [60, 300, 1800, 3600, 43200, 86400]
-	const grossProfitMarginPct = 0.02
+	const grossProfitMarginPct = 1.02
 	const maxInterval = 0.008 // Largest Trade Interval
 	const medInterval = 0.004 // Moderate Trade Interval
 	const minInterval = 0.002 // Smallest Trade Interval
-	let currentPrice = {}
+	let currentPrice
 
 	try {
 		// [CURRENT-PRICE][GET] // [MY-FILLS][GET] //
@@ -45,12 +45,15 @@ async function gregsAlgo(product_id, tradeAmount) {
 
 
 	// [COUNT][ARITHMETIC] Determine Count //
-	const count = await AlgoFunctions.determinCount(timeFramePriceAvgs)
+	// Count is the number of averages about currentPrice
+	const avgsAboveCurrentPriceCount = await AlgoFunctions.determinCount(
+		timeFramePriceAvgs
+	)
 
 
 	// [CURRENT-INTERVAL] Determine Interval //
 	const currentInterval = await AlgoFunctions.determinCurrentInterval(
-		count,
+		avgsAboveCurrentPriceCount,
 		maxInterval,
 		medInterval,
 		minInterval
@@ -63,7 +66,6 @@ async function gregsAlgo(product_id, tradeAmount) {
 		sellPrice,
 		currentInterval
 	)
-	console.log('alreadyBought:', alreadyBought)
 
 
 	// [] //
@@ -93,6 +95,10 @@ async function gregsAlgo(product_id, tradeAmount) {
 		}
 	}
 	else {
+		// [SIZE] //
+		const sellSize = await AlgoFunctions.determinSellSize(tradeAmount)
+
+		
 		return {
 			status: true,
 			message: `Not Bought @ ${currentPrice.price}`
