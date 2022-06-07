@@ -14,7 +14,7 @@ tradeAmount = 70
 
 // [TRADING-BOT-START] //
 async function run() {	
-	while (1 == 1) {
+	while (true) {
 		const returnedData = await Algo.gregsAlgo(product_id, tradeAmount)
 
 		console.log('[CLIENT-INDEX] returnedData:', returnedData)
